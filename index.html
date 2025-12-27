@@ -3,12 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0; url=sierpinski.html">
-    <title>Redirecting...</title>
+    <title>Sierpiński</title>
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #center-div {
+            height: 50%;
+            width: 50%;
+        }
+
+        #sierpinski-canvas {
+            width: 100%;
+            height: 100%;
+            background-color: azure;
+        }
+    </style>
 </head>
 <body>
-    <main>
-        <p>Redirecting to <a href="sierpinski.html">sierpinski.html</a>...</p>
-    </main>
+    <div id="center-div">
+        <canvas id="sierpinski-canvas">
+        </canvas>
+    </div>
 </body>
+
+<script>
+    const rand_int = (max) => Math.floor(Math.random() * (max))
+
+    const rand_color = () => {
+        const r = Math.floor(Math.random() * 256)
+        const g = Math.floor(Math.random() * 256)
+        const b =  Math.floor(Math.random() * 256)
+        const a = 1
+
+        return `rgba(${r}, ${g}, ${b}, ${a})`;
+    }
+
+    const cos = (degrees) => Math.cos((degrees * Math.PI) / 180);
+    const sin = (degrees) => Math.sin((degrees * Math.PI) / 180);
+
+    const point_between = (p1, p2) => [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2]
+
+    const new_state = () => {
+        const angle = rand_int(120)
+        // cos(a) = x
+        // sin(x) = y
+        const state = [0,1,2].map((v)=>[cos(angle+120*v), sin(angle+120*v)])
+        state.push(point_between(state[0], state[1]))
+        return state
+    }
+
+    function draw_point(x, y) {
+        x = x*length + w/2
+        y = y*length + h/2
+        ctx.fillRect(x, y, 1, 1);
+    }
+
+    const draw = () => {
+        state.forEach((p)=>draw_point(p[0], p[1]))
+    }
+
+    const state = new_state()
+    const canvas = document.getElementById("sierpinski-canvas")
+    const ctx = canvas.getContext("2d")
+    ctx.fillStyle = rand_color()
+
+    const size = 500;
+    let length = size * 0.33;
+    let w  = canvas.width = size;
+    let h = canvas.height = size;
+    draw()
+
+    setInterval(()=> {
+        const p = point_between(state[rand_int(3)], state[state.length-1])
+        draw_point(p[0],p[1])
+        state.push(p)
+    }, 1)
+    
+</script>
 </html>
